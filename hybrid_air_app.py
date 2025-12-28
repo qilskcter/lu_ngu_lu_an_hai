@@ -21,6 +21,7 @@ except:
 
 API_KEY = "a8c35a6b54ef7bbf688768bb545ee920" 
 
+@st.cache_data
 def process_air_data(file_source):
     df = pd.read_csv(file_source)
     df = df.interpolate(method='linear').ffill().bfill()
@@ -124,7 +125,6 @@ if df_hist is not None:
                             st.plotly_chart(apply_adaptive_theme(fig_g), use_container_width=True)
                         with cr:
                             st.subheader("Cảnh báo y tế")
-                            # 
                             if pm25_val >= 55.5:
                                 color, title, impact = "#c0392b", "XẤU", "Tránh vận động ngoài trời. Đeo khẩu trang N95."
                             elif pm25_val >= 12.1:
@@ -148,20 +148,17 @@ if df_hist is not None:
             st.plotly_chart(apply_adaptive_theme(fig_l), use_container_width=True)
 
         with tab_map:
-            st.subheader("Bản đồ điểm nóng AQI (Click để xem chi tiết)")
+            st.subheader("Bản đồ điểm nóng AQI")
             
-            # 1. Định nghĩa bảng màu AQI chuẩn
+            if "clicked_data" not in st.session_state:
+                st.session_state.clicked_data = None
+
             aqi_colors = [(0, "#00e400"), (50, "#ffff00"), (100, "#ff7e00"), (150, "#ff0000"), (200, "#8f3f97"), (500, "#7e0023")]
-            
-            # 2. Slider lọc giá trị (CSS nằm trong style.css đã load ở trên)
-            aqi_range = st.select_slider('Lọc giá trị AQI:', options=list(range(0, 501)), value=(0, 500), key="aqi_slider_map")
-            
-            # 3. Xử lý dữ liệu
-            m_df = df_hist[(df_hist['AQI Value'] >= aqi_range[0]) & (df_hist['AQI Value'] <= aqi_range[1])]
-            map_display = m_df.sample(min(2000, len(m_df)))
-            
-            # 4. Cấu hình màu cho Plotly
             plotly_colorscale = [[v/500, c] for v, c in aqi_colors]
+            
+            aqi_range = st.select_slider('Lọc giá trị AQI:', options=list(range(0, 501)), value=(0, 500), key="aqi_slider_map")
+            m_df = df_hist[(df_hist['AQI Value'] >= aqi_range[0]) & (df_hist['AQI Value'] <= aqi_range[1])]
+            map_display = m_df.sample(min(5000, len(m_df)), random_state=42)
             
             fig_map = px.scatter_geo(
                 map_display, locations="Country", locationmode='country names', color="AQI Value", 
@@ -169,37 +166,44 @@ if df_hist is not None:
                 custom_data=["City", "Country", "AQI Value", "CO AQI Value", "Ozone AQI Value", "NO2 AQI Value", "PM2.5 AQI Value"],
                 range_color=[0, 500], color_continuous_scale=plotly_colorscale, projection="natural earth", template="plotly_white"
             )
-            fig_map.update_geos(showcountries=True, countrycolor="#ecf0f1", showland=True, landcolor="#f9f9f9", showocean=True, oceancolor="#ffffff")
-            fig_map.update_layout(margin={"r":0,"t":10,"l":0,"b":0}, height=600, coloraxis_showscale=False, clickmode='event+select')
             
-            event_data = st.plotly_chart(fig_map, use_container_width=True, on_select="rerun", key="geo_map")
+            fig_map.update_traces(marker=dict(opacity=0.6, line=dict(width=0))) 
+            fig_map.update_geos(showcountries=True, countrycolor="#dfe6e9", showland=True, landcolor="#f9f9f9", showocean=True, oceancolor="#ffffff")
+            
+            with st.spinner("Đang trích xuất hồ sơ..."):
+                fig_map.update_layout(margin={"r":0,"t":10,"l":0,"b":0}, height=650, coloraxis_showscale=False, clickmode='event+select')
+                event_data = st.plotly_chart(fig_map, use_container_width=True, on_select="rerun", key="geo_map")
             
             if event_data and "selection" in event_data and len(event_data["selection"]["points"]) > 0:
-                c_data = event_data["selection"]["points"][0]["customdata"]
-                city, country, aqi_val, co, o3, no2, pm25 = c_data
+                st.session_state.clicked_data = event_data["selection"]["points"][0]["customdata"]
+
+            if st.session_state.clicked_data:
+                p = st.session_state.clicked_data
+                city, country, aqi_val, co, o3, no2, pm25 = p
                 
-                active_color = "#00e400"
-                for v, c in aqi_colors:
-                    if aqi_val >= v: active_color = c
+                active_color = next((c for v, c in reversed(aqi_colors) if aqi_val >= v), "#00e400")
                 
                 st.markdown(f"""
-                <div style="padding:15px; border-left: 8px solid {active_color}; background-color: #f1f3f6; border-radius: 5px; margin-top: 20px;">
-                    <h2 style="margin:0; color:#2c3e50;">📍 {city}, {country}</h2>
-                    <p style="margin:0; font-size:18px;">Chỉ số AQI: <b style="color:{active_color};">{aqi_val}</b></p>
+                <div class="detail-container" style="padding:20px; border-left: 10px solid {active_color}; background-color: rgba(128,128,128,0.05); border-radius: 10px; margin-top: 20px;">
+                    <h2 style="margin:0; color:#2c3e50;">{city}, {country}</h2>
+                    <p style="margin:5px 0; font-size:20px;">Chỉ số AQI tổng hợp: <b style="color:{active_color};">{aqi_val}</b></p>
                 </div>
                 """, unsafe_allow_html=True)
 
-                detail_df = pd.DataFrame({
-                    "Chỉ số": ["Tổng quan (AQI)", "CO", "Ozone", "NO2", "PM2.5"],
-                    "Giá trị": [aqi_val, co, o3, no2, pm25]
-                })
-                fig_detail = px.bar(detail_df, x="Chỉ số", y="Giá trị", color="Giá trị", 
-                                    color_continuous_scale=plotly_colorscale, range_color=[0, 500], 
-                                    text_auto=True, template="plotly_white")
-                fig_detail.update_layout(height=400, coloraxis_showscale=False)
+                st.write("#### Thông tin chi tiết từ Dataset")
+                c1, c2, c3, c4 = st.columns(4)
+                c1.metric("PM2.5 AQI", pm25)
+                c2.metric("NO2 AQI", no2)
+                c3.metric("Ozone AQI", o3)
+                c4.metric("CO AQI", co)
+
+                fig_detail = px.bar(x=["AQI", "CO", "O3", "NO2", "PM2.5"], y=[aqi_val, co, o3, no2, pm25],
+                                    color=[aqi_val, co, o3, no2, pm25], color_continuous_scale=plotly_colorscale, 
+                                    range_color=[0, 500], text_auto=True)
+                fig_detail.update_layout(height=400, coloraxis_showscale=False, transition_duration=500)
                 st.plotly_chart(fig_detail, use_container_width=True)
             else:
-                st.info("💡 **Hướng dẫn:** Hãy click chuột vào một chấm tròn trên bản đồ để xem biểu đồ phân tích chi tiết.")
+                st.info("**Hướng dẫn:** Nhấn vào một chấm tròn trên bản đồ để xem hồ sơ dữ liệu chi tiết của khu vực đó.")
 
         with tab_pie:
             st.subheader("Phân bổ cơ cấu chất khí")
