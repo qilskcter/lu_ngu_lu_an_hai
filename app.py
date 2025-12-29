@@ -64,8 +64,13 @@ if df_hist is not None:
             comp = result['components']
 
             city_hist = df_hist[df_hist['City'].str.lower() == city_input.lower()]
-            aqi_val = city_hist.iloc[0]['AQI Value'] if not city_hist.empty else df_hist['AQI Value'].mean()
 
+            if city_hist.empty:
+                row = df_hist.mean(numeric_only=True)
+                st.warning("Không tìm thấy dữ liệu lịch sử của thành phố này, dùng giá trị trung bình.")
+            else:
+                row = city_hist.iloc[0]
+                
             st.subheader("⚠️ Cảnh báo y tế")
             display_health_card(comp['pm2_5'])
 
@@ -78,11 +83,11 @@ if df_hist is not None:
             )
 
             value_map = {
-                "AQI": aqi_val,
-                "CO": comp['co'],
-                "NO2": comp['no2'],
-                "Ozone": comp['o3'],
-                "PM2.5": comp['pm2_5']
+                "AQI": row["AQI Value"],
+                "CO": row["CO AQI Value"],
+                "NO2": row["NO2 AQI Value"],
+                "Ozone": row["Ozone AQI Value"],
+                "PM2.5": row["PM2.5 AQI Value"]
             }
 
             cfg = GAUGE_CFG[selected]
@@ -220,3 +225,4 @@ if df_hist is not None:
 else:
 
     st.info("Vui lòng nạp dữ liệu CSV.")
+
