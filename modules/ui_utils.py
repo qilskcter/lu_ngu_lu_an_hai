@@ -32,12 +32,18 @@ def display_health_card(pm25_val):
         impact = "Chất lượng không khí an toàn. Không có rủi ro sức khỏe."
         action = "Lý tưởng cho các hoạt động thể thao ngoài trời và mở cửa thông gió nhà cửa."
 
-    text_color = "black" if color == "#ffff00" else "white"
+    text_color = "#000000" if color == "#ffff00" else "#ffffff"
 
     st.markdown(f"""
-        <div class="status-card" style="background:{color}; color:{text_color} !important; text-align: left; border-left: 10px solid rgba(0,0,0,0.2);">
-            <h3 style="margin:0; color:{text_color};">{title}</h3>
-            <p style="margin: 10px 0 5px 0; font-size: 0.9em;"><b>Ảnh hưởng:</b> {impact}</p>
-            <p style="margin: 0; font-size: 0.9em;"><b>Khuyến nghị:</b> {action}</p>
+        <div style="background:{color}; color:{text_color}; padding:20px; border-radius:15px; border-left: 10px solid rgba(0,0,0,0.2);">
+            <h2 style="margin:0; color:{text_color} !important; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom:10px;">
+                {title}
+            </h2>
+            <p style="margin: 15px 0 5px 0; font-size: 1.1em;">
+                <strong style="color:{text_color} !important;">Ảnh hưởng:</strong> {impact}
+            </p>
+            <p style="margin: 0; font-size: 1.1em;">
+                <strong style="color:{text_color} !important;">Khuyến nghị:</strong> {action}
+            </p>
         </div>
     """, unsafe_allow_html=True)

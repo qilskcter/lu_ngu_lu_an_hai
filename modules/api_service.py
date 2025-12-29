@@ -1,9 +1,8 @@
 import requests
 
-API_KEY = "a8c35a6b54ef7bbf688768bb545ee920" #
+API_KEY = "a8c35a6b54ef7bbf688768bb545ee920"
 
 def get_realtime_data(city_name):
-    """Lấy dữ liệu Geo và Air Pollution từ OpenWeatherMap."""
     try:
         geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit=1&appid={API_KEY}"
         geo = requests.get(geo_url).json()

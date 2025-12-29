@@ -20,7 +20,6 @@ section[data-testid="stSidebar"] {
     border: 1px solid rgba(128, 128, 128, 0.1);
 }
 
-/* Thẻ Metric hiện đại */
 div[data-testid="stMetric"] {
     background: rgba(128, 128, 128, 0.05) !important;
     -webkit-backdrop-filter: blur(15px);
