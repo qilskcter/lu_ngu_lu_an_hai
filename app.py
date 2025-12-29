@@ -63,7 +63,7 @@ if df_hist is not None:
                 st.divider()
                 cg, cr = st.columns([1.5, 1])
                 with cg:
-                    st.plotly_chart(create_gauge(comp['pm2_5'], df_hist['AQI Value'].mean()), use_container_width=True)
+                    st.plotly_chart(create_gauge(comp['pm2_5'], df_hist['AQI Value'].mean()), width='stretch')
                 with cr:
                     st.subheader("Cảnh báo y tế")
                     display_health_card(comp['pm2_5'])
@@ -88,7 +88,7 @@ if df_hist is not None:
             col_m, col_s = st.columns([3, 1])
             with col_m:
                 fig_map = create_main_map(m_df, continent_map[sel_cont], colorscale)
-                event = st.plotly_chart(fig_map, use_container_width=True, on_select="rerun", key="geo_map")
+                event = st.plotly_chart(fig_map, width='stretch', on_select="rerun", key="geo_map")
             
             with col_s:
                 st.markdown(f"**Top 5 ({sel_cont})**")
@@ -131,11 +131,11 @@ if df_hist is not None:
         with tab_line:
             sel_c = st.selectbox("Chọn quốc gia:", sorted(df_hist['Country'].unique()))
             fig_l = px.area(df_hist[df_hist['Country'] == sel_c].sort_values('AQI Value'), x='City', y=['AQI Value', 'PM2.5 AQI Value'])
-            st.plotly_chart(apply_adaptive_theme(fig_l), use_container_width=True)
+            st.plotly_chart(apply_adaptive_theme(fig_l), width='stretch')
 
         with tab_pie:
             p_sums = df_hist[['CO AQI Value', 'Ozone AQI Value', 'NO2 AQI Value', 'PM2.5 AQI Value']].mean()
             fig_pie = px.pie(values=p_sums, names=["CO", "O3", "NO2", "PM2.5"], hole=0.5)
-            st.plotly_chart(apply_adaptive_theme(fig_pie), use_container_width=True)
+            st.plotly_chart(apply_adaptive_theme(fig_pie), width='stretch')
 else:
     st.info("Vui lòng nạp dữ liệu CSV.")
