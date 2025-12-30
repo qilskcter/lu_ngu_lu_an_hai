@@ -57,7 +57,7 @@ if df_hist is not None:
                 key="city_select_combined"
             )
 
-            if city_choice == "Nhập thành phố khác":
+            if city_choice == "Thành phố khác":
                 city_input = st.text_input("Nhập chính xác tên thành phố:", key="city_manual_input")
             else:
                 city_input = city_choice
