@@ -219,7 +219,7 @@ if df_hist is not None:
             
             with col_l1:
                 line_continents = ["Toàn cầu"] + sorted(df_hist['Continent'].unique().tolist())
-                sel_line_cont = st.selectbox("Chọn Châu lục:", line_continents, key="line_cont_sel")
+                sel_line_cont = st.selectbox("Khu vực:", line_continents, key="line_cont_sel")
             
             with col_l2:
                 if sel_line_cont == "Toàn cầu":
@@ -227,7 +227,7 @@ if df_hist is not None:
                 else:
                     line_countries = sorted(df_hist[df_hist['Continent'] == sel_line_cont]['Country'].unique().tolist())
                 
-                sel_line_country = st.selectbox(f"Chọn quốc gia ({sel_line_cont}):", line_countries, key="line_country_sel")
+                sel_line_country = st.selectbox(f"Quốc gia ({sel_line_cont}):", line_countries, key="line_country_sel")
 
             df_line = df_hist[df_hist['Country'] == sel_line_country].sort_values('AQI Value')
 
@@ -253,7 +253,7 @@ if df_hist is not None:
             
             with col_sel1:
                 available_continents = ["Toàn cầu"] + sorted(df_hist['Continent'].unique().tolist())
-                sel_continent = st.selectbox("Chọn Châu lục:", available_continents)
+                sel_continent = st.selectbox("Khu vực:", available_continents)
             
             with col_sel2:
                 if sel_continent == "Toàn cầu":
@@ -261,7 +261,7 @@ if df_hist is not None:
                 else:
                     countries_filtered = sorted(df_hist[df_hist['Continent'] == sel_continent]['Country'].unique().tolist())
                 
-                sel_country = st.selectbox(f"Chọn quốc gia ({sel_continent}):", ["Tất cả"] + countries_filtered)
+                sel_country = st.selectbox(f"Quốc gia ({sel_continent}):", ["Tất cả"] + countries_filtered)
 
             if sel_continent == "Toàn cầu":
                 if sel_country == "Tất cả":
