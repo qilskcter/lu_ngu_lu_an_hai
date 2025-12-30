@@ -11,10 +11,10 @@ from modules.ui_utils import load_css, display_health_card
 st.set_page_config(
     page_title="Pollution Analysis", 
     layout="wide", 
-    page_icon="https://img.icons8.com/color/48/air-quality.png"
+    page_icon="Assets/air-quality.png"
 )
 
-load_css("style.css")
+load_css("Assets/style.css")
 
 default_file = 'Data_Analysis/global_air_pollution_clean_data_set.csv'
 df_hist = None
