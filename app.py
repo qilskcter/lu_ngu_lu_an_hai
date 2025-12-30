@@ -130,6 +130,7 @@ if df_hist is not None:
             col_sel1, col_sel2 = st.columns([1, 2])
             with col_sel1: sel_cont = st.selectbox("Khu vực:", list(continent_map.keys()))
             with col_sel2: aqi_range = st.select_slider('AQI:', options=list(range(501)), value=(0, 500))
+            st.markdown('<div style="margin-top: 30px;"></div>', unsafe_allow_html=True)
 
             aqi_colors = [(0, "#00e400"), (50, "#ffff00"), (100, "#ff7e00"), (150, "#ff0000"), (200, "#8f3f97"), (500, "#7e0023")]
             colorscale = [[v/500, c] for v, c in aqi_colors]
