@@ -70,8 +70,8 @@ if df_hist is not None:
                 st.warning("Không tìm thấy dữ liệu lịch sử của thành phố này, dùng giá trị trung bình.")
             else:
                 row = city_hist.iloc[0]
-                
-            st.subheader("⚠️ Cảnh báo y tế")
+
+            st.subheader("Cảnh báo y tế")
             display_health_card(comp['pm2_5'])
 
             st.markdown("### Chọn chỉ số cần xem")
@@ -92,6 +92,8 @@ if df_hist is not None:
 
             cfg = GAUGE_CFG[selected]
 
+            st.markdown('<div style="margin-top: 50px;"></div>', unsafe_allow_html=True)
+
             st.plotly_chart(
                 create_gauge(
                     selected,
@@ -101,7 +103,7 @@ if df_hist is not None:
                     cfg["steps"],
                     cfg["unit"]
                 ),
-                use_container_width=True
+                width='stretch'
             )
 
     else:
@@ -112,6 +114,7 @@ if df_hist is not None:
             col_sel1, col_sel2 = st.columns([1, 2])
             with col_sel1: sel_cont = st.selectbox("Khu vực:", list(continent_map.keys()))
             with col_sel2: aqi_range = st.select_slider('AQI:', options=list(range(501)), value=(0, 500))
+            st.markdown(f"", unsafe_allow_html=True)
 
             aqi_colors = [(0, "#00e400"), (50, "#ffff00"), (100, "#ff7e00"), (150, "#ff0000"), (200, "#8f3f97"), (500, "#7e0023")]
             colorscale = [[v/500, c] for v, c in aqi_colors]
@@ -130,7 +133,30 @@ if df_hist is not None:
                 st.markdown(f"**Top 5 ({sel_cont})**")
                 for _, row in m_df.nlargest(5, 'AQI Value').iterrows():
                     c_code = next((c for v, c in reversed(aqi_colors) if row['AQI Value'] >= v), "#00e400")
-                    st.markdown(f'<div style="border-left:5px solid {c_code}; padding:5px; background:#f1f2f6; margin-bottom:5px;"><small>{row["City"]}</small><br><b>AQI: {row["AQI Value"]}</b></div>', unsafe_allow_html=True)
+                    st.markdown(f"""
+                        <div style="
+                            border-left: 5px solid {c_code}; 
+                            padding: 10px; 
+                            background: rgba(128, 128, 128, 0.1); 
+                            border-radius: 8px;
+                            margin-bottom: 8px;
+                            line-height: 1.4;
+                        ">
+                            <div style="
+                                font-size: 0.85rem; 
+                                opacity: 0.8;
+                                font-weight: 500;
+                            ">
+                                {row["City"]}
+                            </div>
+                            <div style="
+                                font-size: 1.1rem; 
+                                font-weight: 700;
+                            ">
+                                AQI: <span style="color: {c_code};">{row["AQI Value"]}</span>
+                            </div>
+                        </div>
+                    """, unsafe_allow_html=True)
 
             if event and "selection" in event and len(event["selection"]["points"]) > 0:
                 st.session_state.clicked_data = event["selection"]["points"][0]["customdata"]
@@ -142,11 +168,21 @@ if df_hist is not None:
                 active_color = next((c for v, c in reversed(aqi_colors) if aqi_val >= v), "#00e400")
                 
                 st.markdown(f"""
-                <div class="detail-container" style="padding:20px; border-left: 10px solid {active_color}; background-color: rgba(128,128,128,0.05); border-radius: 10px; margin-top: 20px;">
-                    <h2 style="margin:0; color:#2c3e50;">{city}, {country}</h2>
-                    <p style="margin:5px 0; font-size:20px;">Chỉ số AQI tổng hợp: <b style="color:{active_color};">{aqi_val}</b></p>
-                </div>
-                """, unsafe_allow_html=True)
+                    <div class="detail-container" style="
+                        padding: 20px; 
+                        border-left: 10px solid {active_color}; 
+                        background: rgba(128, 128, 128, 0.1); 
+                        border-radius: 15px; 
+                        margin-top: 20px;
+                        border-top: 1px solid rgba(128, 128, 128, 0.05);
+                    ">
+                        <h2 style="margin:0; font-weight: 700;">{city}, {country}</h2>
+                        <p style="margin:10px 0 0 0; font-size: 1.1rem; opacity: 0.9;">
+                            Chỉ số AQI tổng hợp: 
+                            <b style="color:{active_color}; font-size: 1.5rem; margin-left: 5px;">{aqi_val}</b>
+                        </p>
+                    </div>
+                    """, unsafe_allow_html=True)
 
                 st.write("#### Thông tin chi tiết từ Dataset")
                 c1, c2, c3, c4 = st.columns(4)
@@ -226,5 +262,3 @@ if df_hist is not None:
 else:
 
     st.info("Vui lòng nạp dữ liệu CSV.")
-
-

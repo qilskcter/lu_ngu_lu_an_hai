@@ -29,6 +29,7 @@ def get_continent_from_country(country_name):
             'Syrian Arab Republic', 'Tajikistan', 'Thailand', 'Turkey', 'Turkmenistan', 
             'United Arab Emirates', 'Uzbekistan', 'Viet Nam', 'Yemen'
         ],
+
         'Châu Âu': [
             'Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 
             'Bulgaria', 'Croatia', 'Cyprus', 'Czechia', 'Denmark', 'Estonia', 'Finland', 
@@ -39,17 +40,20 @@ def get_continent_from_country(country_name):
             'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Ukraine', 
             'United Kingdom of Great Britain and Northern Ireland'
         ],
+
         'Bắc Mỹ': [
             'Aruba', 'Barbados', 'Belize', 'Canada', 'Costa Rica', 'Cuba', 'Dominican Republic', 
             'El Salvador', 'Guatemala', 'Haiti', 'Honduras', 'Jamaica', 'Mexico', 
             'Nicaragua', 'Panama', 'Saint Kitts and Nevis', 'Saint Lucia', 
             'Trinidad and Tobago', 'United States of America'
         ],
+
         'Nam Mỹ': [
             'Argentina', 'Bolivia (Plurinational State of)', 'Brazil', 'Chile', 'Colombia', 
             'Ecuador', 'Guyana', 'Paraguay', 'Peru', 'Suriname', 'Uruguay', 
             'Venezuela (Bolivarian Republic of)'
         ],
+
         'Châu Phi': [
             'Algeria', 'Angola', 'Benin', 'Botswana', 'Burkina Faso', 'Burundi', 'Cabo Verde', 
             'Cameroon', 'Central African Republic', 'Chad', 'Comoros', 'Congo', "Côte d'Ivoire", 
@@ -61,6 +65,7 @@ def get_continent_from_country(country_name):
             'South Africa', 'South Sudan', 'Sudan', 'Togo', 'Tunisia', 'Uganda', 
             'United Republic of Tanzania', 'Zambia', 'Zimbabwe'
         ],
+        
         'Châu Đại Dương': [
             'Australia', 'New Zealand', 'Palau', 'Papua New Guinea', 'Solomon Islands', 'Vanuatu'
         ]

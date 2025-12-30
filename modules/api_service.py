@@ -18,5 +18,6 @@ def get_realtime_data(city_name):
             "country": geo[0]['country'],
             "components": res['list'][0]['components']
         }, None
+    
     except Exception as e:
         return None, f"Lỗi kết nối: {str(e)}"

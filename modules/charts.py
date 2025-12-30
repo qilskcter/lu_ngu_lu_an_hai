@@ -24,6 +24,7 @@ GAUGE_CFG = {
             {'range': [300, 500], 'color': "#7e0023"}
         ]
     },
+
     "CO": {
         "col": "CO AQI Value",
         "max": 200,
@@ -34,6 +35,7 @@ GAUGE_CFG = {
             {'range': [100, 200], 'color': "#e74c3c"}
         ]
     },
+
     "NO2": {
         "col": "NO2 AQI Value",
         "max": 50,
@@ -44,6 +46,7 @@ GAUGE_CFG = {
             {'range': [30, 50], 'color': "#e74c3c"}
         ]
     },
+
     "Ozone": {
         "col": "Ozone AQI Value",
         "max": 200,
@@ -54,6 +57,7 @@ GAUGE_CFG = {
             {'range': [120, 200], 'color': "#e74c3c"}
         ]
     },
+
     "PM2.5": {
         "col": "PM2.5 AQI Value",
         "max": 150,
@@ -72,7 +76,7 @@ def create_gauge(title, value, avg, max_val, steps, unit=""):
         value=value,
         number={
             "suffix": unit,
-            "font": {"size": 26}
+            "font": {"size": 50}
         },
         delta={
             "reference": avg,
@@ -90,7 +94,11 @@ def create_gauge(title, value, avg, max_val, steps, unit=""):
         }
     ))
 
-    fig.update_layout(height=260)
+    fig.update_layout(
+        height=400,
+        margin=dict(t=80, b=20, l=30, r=30),
+        font={'size': 16}
+        )
     return apply_adaptive_theme(fig)
 
 def create_main_map(df, scope, colorscale):
@@ -142,6 +150,4 @@ def create_main_map(df, scope, colorscale):
         uniformtext_mode='hide' 
     )
     
-
     return fig
-
